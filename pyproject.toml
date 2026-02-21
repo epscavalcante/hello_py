@@ -1,0 +1,51 @@
+[project]
+name = "your_project"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "fastapi>=0.129.2",
+    "sqlalchemy>=2.0.46",
+    "sqlalchemy-orm>=1.2.10",
+    "uvicorn>=0.41.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "taskipy",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "httpx>=0.28.1",
+]
+
+[tool.mypy]
+strict = true
+exclude = ["tests/"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 79
+target-version = "py312"
+extend-exclude= ["migrations"]
+
+[tool.ruff.lint]
+preview = true
+select = ["E", "F", "I", "W", "PL", "PT"]
+ignore = ["E203"]
+
+[tool.ruff.format]
+preview = true
+quote-style = "single"
+indent-style = "space"
+
+[tool.taskipy.tasks]
+lint = 'ruff check .'
+lint_fix = 'ruff check --fix'
+format = 'ruff format'
+test = 'pytest'
+test_coverage = 'pytest --cov=app --cov-report=term-missing --cov-fail-under=90 -vv'
