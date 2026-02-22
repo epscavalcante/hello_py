@@ -1,3 +1,5 @@
+import pytest
+
 from app.application.use_cases.signup.signup_input import SignupInput
 from app.application.use_cases.signup.signup_output import SignupOutput
 from app.domain.entities.account import Account
@@ -15,9 +17,9 @@ class Signup:
     def __init__(self, account_repository: AccountRepository):
         self._account_repository = account_repository
 
-    def execute(self, data: SignupInput) -> SignupOutput:
+    async def execute(self, data: SignupInput) -> SignupOutput:
         email = Email(data.email)
-        account_exists = self._account_repository.exists(email)
+        account_exists = await self._account_repository.get_by_email(email)
 
         if account_exists:
             raise EmailAlreadyExistsException('Email already exists')

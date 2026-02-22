@@ -7,3 +7,12 @@ DATABASE_URL = 'sqlite:///./app.db'
 
 engine = create_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(bind=engine)
+
+
+# Dependency para FastAPI (gerador)
+def get_session():
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()

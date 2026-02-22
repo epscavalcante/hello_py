@@ -12,7 +12,7 @@ class SqlAlchemyAccountRepository(AccountRepository):
     def __init__(self, session: Session):
         self._session = session
 
-    def save(self, account: Account) -> None:
+    async def save(self, account: Account) -> None:
         model = AccountModel(
             account_id=str(account.id),
             first_name=account.name.first_name,
@@ -24,7 +24,7 @@ class SqlAlchemyAccountRepository(AccountRepository):
         self._session.merge(model)
         self._session.commit()
 
-    def get_by_id(self, account_id: AccountId) -> Account | None:
+    async def get_by_id(self, account_id: AccountId) -> Account | None:
         model = self._session.get(AccountModel, str(account_id))
 
         if not model:
@@ -37,21 +37,20 @@ class SqlAlchemyAccountRepository(AccountRepository):
             # is_active=model.is_active,
         )
 
+    async def get_by_email(self, email: Email) -> Account | None:
+        model = (
+            self._session
+            .query(AccountModel)
+            .filter(AccountModel.email == str(email))
+            .first()
+        )
 
-def get_by_email(self, email: Email) -> Account | None:
-    model = (
-        self._session
-        .query(AccountModel)
-        .filter(AccountModel.email == str(email))
-        .first()
-    )
+        if not model:
+            return None
 
-    if not model:
-        return None
-
-    return Account(
-        account_id=AccountId.from_str(model.account_id),
-        name=Name(model.first_name, model.last_name),
-        email=Email(model.email),
-        # is_active=model.is_active,
-    )
+        return Account(
+            account_id=AccountId.from_str(model.account_id),
+            name=Name(model.first_name, model.last_name),
+            email=Email(model.email),
+            # is_active=model.is_active,
+        )

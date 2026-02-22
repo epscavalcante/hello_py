@@ -6,7 +6,7 @@ from app.main import app
 
 
 class TestName:
-    def test_should_successfully_call_root_endpoint(self):
+    def test_should_successfully_call_root_endpoint(self):  # noqa: PLR6301
         client = TestClient(app)
         response = client.get('/')
         assert response.status_code == HTTPStatus.OK
